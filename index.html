@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>內政部警政署 - 個人資安外洩查詢系統 (模擬)</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background-color: #1d3a5f;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        header .badge {
+            background: white;
+            color: #1d3a5f;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* 通用樣式 */
+        h2 { text-align: center; color: #1d3a5f; margin-bottom: 20px; }
+        p { line-height: 1.6; }
+        
+        .form-group { margin-bottom: 20px; }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #1d3a5f;
+        }
+
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 18px;
+            box-sizing: border-box;
+            text-align: center; /* 讓輸入文字置中，更清楚 */
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #1d3a5f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover { background-color: #2c5282; }
+
+        .warning-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* 各個步驟的顯示控制 */
+        .step-section { display: none; }
+        .step-section.active { display: block; }
+
+        /* Loading 動畫 */
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #e74c3c;
+            transition: width 0.1s linear;
+        }
+
+        .log-console {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            height: 180px;
+            overflow: hidden;
+            text-align: left;
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        /* 結果與教育頁面 */
+        .alert-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .leaked-count {
+            font-size: 48px;
+            font-weight: bold;
+            color: #dc3545;
+            margin: 10px 0;
+        }
+
+        .fake-warning {
+            background-color: #dc3545;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .tips {
+            background: #f1f3f5;
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+
+        .tips li { margin-bottom: 12px; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="badge">警</div>
+    <h1>全國個資外洩稽核中心</h1>
+</header>
+
+<div class="container">
+    
+    <!-- STEP 1: 輸入姓名 -->
+    <div id="step-name" class="step-section active">
+        <h2>個人資料安全檢測</h2>
+        <p style="text-align: center;">請輸入您的真實姓名，系統將自動比對暗網、駭客資料庫及近期外洩名單。</p>
+        
+        <div class="form-group">
+            <label for="input-name">請輸入真實姓名：</label>
+            <input type="text" id="input-name" placeholder="例如：王大明">
+        </div>
+        <div class="form-group">
+            <button class="btn" onclick="goToStep2()">下一步</button>
+        </div>
+        <p class="warning-text">※ 本系統與警政單位連線，所有查詢紀錄將被加密保存。</p>
+    </div>
+
+    <!-- STEP 2: 輸入電話末三碼 (新增) -->
+    <div id="step-phone" class="step-section">
+        <h2>身分確認</h2>
+        <p style="text-align: center;">為避免同名同姓造成誤判，請輸入您手機號碼的<br><span style="color: #d32f2f; font-weight: bold;">最後三碼</span>以進行身分核對。</p>
+        
+        <div class="form-group">
+            <label for="input-phone">手機末三碼：</label>
+            <input type="tel" id="input-phone" maxlength="3" placeholder="例如：888" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        </div>
+        <div class="form-group">
+            <button class="btn" onclick="startSimulation()">確認並開始查詢</button>
+        </div>
+        <p class="warning-text">※ 僅用於區分身分，不會撥打您的電話。</p>
+    </div>
+
+    <!-- STEP 3: 搜尋動畫 -->
+    <div id="step-loading" class="step-section">
+        <h3 style="text-align: center;">正在連接全球資料庫...</h3>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="log-console" id="logConsole"></div>
+        <p style="color:red; font-weight:bold; margin-top:10px; text-align: center; animation: blink 1s infinite;">⚠️ 請勿關閉瀏覽器，以免資料遺失...</p>
+    </div>
+
+    <!-- STEP 4: 搜尋結果 -->
+    <div id="step-result" class="step-section">
+        <div class="alert-box">
+            <h3>⚠️ 警告：發現外洩紀錄</h3>
+            <p>經比對 1,240 萬筆資料後，<br>發現您的資料共有：</p>
+            <div class="leaked-count"><span id="leakCount">0</span> 筆</div>
+            <p>外洩來源包含：<br>購物網站、社群平台、信用卡交易紀錄</p>
+        </div>
+        <button class="btn" style="background-color: #dc3545;" onclick="revealTruth()">立即查看外洩內容</button>
+    </div>
+
+    <!-- STEP 5: 真相揭露 -->
+    <div id="step-education" class="step-section">
+        <div class="fake-warning">
+            <h2 style="color: white; margin:0;">🛑 這是假的網站！</h2>
+            <hr style="border-color: rgba(255,255,255,0.3); margin: 15px 0;">
+            <p style="font-size: 1.1rem;">雨青老師提醒您，如果剛剛輸入了<br><strong>「姓名」+「電話末三碼」</strong></p>
+            <p>詐騙集團已經可以利用這些片段資訊，拼湊出您的完整個資，甚至進行手機小額付款詐騙！</p>
+        </div>
+        
+        <div class="tips">
+            <h3 style="color: #1d3a5f; margin-top: 0;">防詐騙重點：</h3>
+            <ol>
+                <li><strong>要注意網頁連結：</strong> 即便是看起來很像官方的網站，只要要求輸入個資，先懷疑。</li>
+                <li><strong>片段資訊也危險：</strong> 詐騙集團常分段騙取資料（先問名字、再問電話），不要以為只給一點點沒關係。</li>
+                <li><strong>看到外洩先別慌：</strong> 這是恐嚇行銷，目的是讓你失去理智點擊連結。</li>
+            </ol>
+        </div>
+        <br>
+        <button class="btn" onclick="resetExperience()">重新體驗 (給下一位)</button>
+    </div>
+
+</div>
+
+<footer>
+    不要聽信任何陌生連結的指示。<br>
+    有疑問請直接撥打 <span style="color: #dc3545; font-weight: bold;">165</span> 反詐騙專線求證。
+</footer>
+
+<script>
+    // 狀態切換 Helper
+    function showSection(id) {
+        document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    // 第一步：檢查名字
+    function goToStep2() {
+        const nameInput = document.getElementById('input-name').value;
+        if (!nameInput.trim()) {
+            alert("請輸入姓名！");
+            return;
+        }
+        showSection('step-phone');
+    }
+
+    // 第二步：檢查電話並開始模擬
+    const fakeLogs = [
+        "連接內政部戶政加密伺服器...",
+        "驗證使用者名稱...",
+        "正在解密 SSL 封包...",
+        "核對手機號碼特徵值...",
+        "掃描 DarkWeb (暗網) 資料庫...",
+        "發現 1 筆疑似重疊資料...",
+        "比對 Facebook 用戶緩存...",
+        "發現可疑的境外 IP 連線...",
+        "正在下載雲端交易紀錄...",
+        "解析信用卡交易加密雜湊...",
+        "連接警政署 165 反詐騙資料庫...",
+        "正在進行深度封包檢測 (DPI)...",
+        "發現異常登入紀錄 (來源: 柬埔寨)...",
+        "確認身分：高度相符...",
+        "正在生成外洩報告..."
+    ];
+
+    function startSimulation() {
+        const phoneInput = document.getElementById('input-phone').value;
+        if (phoneInput.length < 3) {
+            alert("請輸入手機末三碼！");
+            return;
+        }
+
+        showSection('step-loading');
+        runProgress();
+    }
+
+    function runProgress() {
+        let progress = 0;
+        const progressBar = document.getElementById('progressBar');
+        const logConsole = document.getElementById('logConsole');
+        logConsole.innerHTML = ''; // 清空舊日誌
+        
+        // 隨機生成外洩筆數 (1-9)
+        const randomLeak = Math.floor(Math.random() * 9) + 1;
+        document.getElementById('leakCount').innerText = randomLeak;
+
+        const interval = setInterval(() => {
+            progress += 1;
+            progressBar.style.width = progress + '%';
+
+            // 隨機跑日誌
+            if (progress % 3 === 0 || progress === 1 || progress === 98) {
+                const randomLog = fakeLogs[Math.floor(Math.random() * fakeLogs.length)];
+                const p = document.createElement('div');
+                p.innerText = `> [SYSTEM] ${randomLog}`;
+                logConsole.appendChild(p);
+                logConsole.scrollTop = logConsole.scrollHeight; 
+            }
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    showSection('step-result');
+                }, 800);
+            }
+        }, 40); // 跑動速度
+    }
+
+    function revealTruth() {
+        showSection('step-education');
+    }
+
+    // 重置功能 (不使用 reload，體驗更好)
+    function resetExperience() {
+        // 清空輸入框
+        document.getElementById('input-name').value = '';
+        document.getElementById('input-phone').value = '';
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('logConsole').innerHTML = '';
+        
+        // 回到第一步
+        showSection('step-name');
+    }
+</script>
+
+</body>
+</html>
